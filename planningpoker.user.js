@@ -6,15 +6,15 @@
 // @grant           none
 // @downloadURL     https://alinstefanola.ru/Custom-Planning-Poker/planningpoker.user.js
 // @updateURL       https://alinstefanola.ru/Custom-Planning-Poker/planningpoker.user.js
-// @version         0.01
+// @version         0.02
 // @run-at          document-end
 // ==/UserScript==
 
 var CustomPoker = {
-  initHtml: () => {
+  initPreviewCard: () => {
     var cardImage = $("<img>").attr({
       id: "fancy-image",
-      src: "https://i.ebayimg.com/images/g/kykAAOSweW5VEPA5/s-l640.jpg"
+      src: "https://media.giphy.com/media/AXQaLoWMeSmRy/giphy.gif"
     });
     var cardPreview = $("<div>")
       .attr({ class: "SelectableCard col-md-1" })
@@ -27,32 +27,41 @@ var CustomPoker = {
       .find('img[src$="/Content/Cards/CardBreak.png"]')
       .parent()
       .after(cardPreview);
+  },
+  initButton: () => {
+    var btn = $("<button>")
+      .attr({
+        class: "btn btn-default"
+      })
+      .text("Send!")
+      .click(() => {
+        var text = $("#custom-card-input").val();
+        hub.server.selectCard(text);
+      });
+    $("#ControlPanel").append(btn);
+  },
+  initInput: () => {
     var input = $("<input>")
       .attr({
         id: "custom-card-input",
-        class: "form-control input-sm"
+        class: "form-control input-sm",
+        placeholder: "Image URL",
+        value: "https://media.giphy.com/media/AXQaLoWMeSmRy/giphy.gif"
       })
       .keyup(function(a) {
         console.log($(this).val());
         $("#fancy-image").attr("src", $(this).val());
       });
 
-    var btn = $("<button>")
-      .attr({
-        class: "btn btn-default"
-      })
-      .text("Do stuff")
-      .click(() => {
-        var text = $("#custom-card-input").val();
-        hub.server.selectCard(text);
-      });
-
-    $("#ControlPanel")
-      .append(input)
-      .append(btn);
+    $("#ControlPanel").append(input);
+  },
+  init: () => {
+    CustomPoker.initPreviewCard();
+    CustomPoker.initInput();
+    CustomPoker.initButton();
   }
 };
 
 $(document).ready(() => {
-  CustomPoker.initHtml();
+  CustomPoker.init();
 });
